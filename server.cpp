@@ -52,7 +52,7 @@ void * client_thread( void * );
 int main(int argc, char* argv[])
 {
     const int port_number = 2025;
-    const int max_clients = 10;
+    const int max_clients = 100;
 
     int master_socket_fd;
     struct sockaddr_in server_addr;
@@ -67,11 +67,11 @@ int main(int argc, char* argv[])
     if( master_socket_fd == -1)
     {
         close(master_socket_fd);
-        std::cerr << "Cannot open socket" << std::endl;
+        std::cerr << "Cannot open tcp socket" << std::endl;
         return 0;
     }
 
-    // Forcefully attaching socket to the same port again
+    // Forcefully attaching socket to the same port again after restart
     if( setsockopt(master_socket_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, (const void *)&opt, (socklen_t)sizeof(opt)) == -1 )
     {
         std::cerr << "setsockopt" << std::endl;
@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
     // bind socket
     if( bind(master_socket_fd, (struct sockaddr *)&server_addr, (socklen_t)sizeof(server_addr)) == -1 )
     {
-        std::cerr << "Cannot bind" << std::endl;
+        std::cerr << "Cannot bind to port " << port_number << std::endl;
         return 0;
     }
 
@@ -262,6 +262,7 @@ void * client_thread ( void * client_socket_fd )
 
     std::cout << "Closing connection with socket_fd: " << fd << ".  Name: " << client_name
                 << ".  Exiting the thread." << std::endl;
+
     close(fd);
     pthread_exit(NULL);
 
