@@ -29,7 +29,6 @@
 extern bool terminal_color;
 
 
-
 namespace terminal {
 
 	// Sets SGR(Select Graphic Rendition) parameters, including text colors

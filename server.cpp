@@ -124,7 +124,7 @@ void * client_thread ( void * client_socket_fd )
         }
 
         make_encoded_message(client_name, "Server:online", std::string(" is online"), sizeof(output), output);
-        //print_encoded_message(output, sizeof(output));
+        print_encoded_message(output, sizeof(output));
 
         send(client.second, output, sizeof(output), 0);
     }
@@ -140,7 +140,8 @@ void * client_thread ( void * client_socket_fd )
             is_are = std::string(" is online");
         }
         make_encoded_message(active_clients.c_str(), "Server:online", is_are, sizeof(output), output);
-        print_encoded_message(output, sizeof(output));
+        //print_encoded_message(output, sizeof(output));
+
         send(fd, output, sizeof(output), 0);
     }
 
@@ -178,7 +179,7 @@ void * client_thread ( void * client_socket_fd )
         if ( !dest_names.empty() )
         {
             // for each destination names in encoded_message do
-            for( auto d_name: dest_names )
+            for( const auto& d_name: dest_names )
             {
                 int dest_socket_desc;
 
@@ -220,6 +221,15 @@ void * client_thread ( void * client_socket_fd )
 
     // removing connection information from list_clients
     list_clients.erase(client_name);
+
+    // Notify to all clients that this connection is leaving
+    for( const auto& client: list_clients )
+    {
+        make_encoded_message(client_name, "Server:online", std::string(" is leaving"), sizeof(output), output);
+        //print_encoded_message(output, sizeof(output));
+
+        send(client.second, output, sizeof(output), 0);
+    }
 
     std::cout << "Closing connection with socket_fd: " << fd << ".  Name: " << client_name
                 << ".  Exiting the thread." << std::endl;

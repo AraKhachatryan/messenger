@@ -23,6 +23,7 @@ $(TARGET_2): client.o encode_decode.o
 	@echo Linking $< '--->'
 	$(CC) $(OBJECTS_2) -Wall $(LIBS) -o $@
 
+
 .PHONY: default all clean
 
 clean:

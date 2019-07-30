@@ -95,7 +95,7 @@ void * send_thread( void * arg )
     bzero(client_name, sizeof(client_name));
 
     std::cout << "Write your name: " << terminal::TEXT_BOLD << terminal::TEXTCOLOR_CYAN;
-    std::cin.getline(client_name, 100);
+    std::cin.getline(client_name, 50);
     std::cout << terminal::RESET_ALL;
 
 	send(socket_desc, (char*)&client_name, sizeof(client_name), 0);
@@ -154,7 +154,7 @@ void * send_thread( void * arg )
         // Private message is send
         if ( !dest_names.empty() )
         {
-            std::cout << terminal::TEXT_BOLD << terminal::TEXTCOLOR_RED;
+            std::cout << terminal::TEXT_BOLD << terminal::TEXTCOLOR_BLUE;
 
             for( auto it = dest_names.begin(); it != dest_names.end(); ++it )
             {
@@ -165,7 +165,7 @@ void * send_thread( void * arg )
                 }
             }
 
-            std::cout << terminal::RESET_ALL << ": " << terminal::TEXT_BOLD << terminal::TEXTCOLOR_YELLOW
+            std::cout << terminal::RESET_ALL << "<- " << terminal::TEXT_BOLD << terminal::TEXTCOLOR_YELLOW
                         << message << terminal::RESET_ALL << std::endl;
 
         // Public message is send (if no dest_names)
@@ -213,15 +213,15 @@ void * recv_thread( void * arg )
         // Private incoming messages
         if( !message_info.compare("Private") )
         {
-            std::cout << terminal::TEXT_BOLD << terminal::TEXTCOLOR_BLUE << name_from.front()
-                        << terminal::RESET_ALL <<  ": " << terminal::TEXT_BOLD << terminal::TEXTCOLOR_GREEN
+            std::cout << terminal::TEXT_BOLD << terminal::TEXTCOLOR_RED << name_from.front()
+                        << terminal::RESET_ALL <<  "-> " << terminal::TEXT_BOLD << terminal::TEXTCOLOR_GREEN
                         << message_from << terminal::RESET_ALL << std::endl;
         // Public incoming messages
         } else if ( !message_info.compare("Public") ) {
-            std::cout << name_from.front()
-                        << terminal::RESET_ALL <<  ": " << terminal::TEXT_BOLD << terminal::TEXTCOLOR_GREEN
+            std::cout << terminal::TEXT_BOLD << terminal::TEXTCOLOR_WHITE << name_from.front()
+                        << terminal::RESET_ALL <<  "-> " << terminal::TEXT_BOLD << terminal::TEXTCOLOR_GREEN
                         << message_from << terminal::RESET_ALL << std::endl;
-        // New active clients
+        // New active clients notifications
         } else if ( !message_info.compare("Server:online") ) {
             std::cout << terminal::TEXT_BOLD << terminal::TEXTCOLOR_CYAN;
             for( auto it = name_from.begin(); it != name_from.end(); ++it )

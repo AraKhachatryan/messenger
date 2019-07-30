@@ -3,12 +3,12 @@
 *  @brief functions for encodeing and decoding messages for sending over socket
 *
 *  @brief first 100 byte are destination names part
-*  @brief from 100 to 120 byte are message info part
-*  @brief from 120 byte are message
+*  @brief from 100 to 128 byte are message info part
+*  @brief from 128 byte are message
 *  @brief message structure (dots are NULL or 0x00)
 *
 *  @brief Tom,Sophia...........................................................
-*         ...............................Private.............Hello!!!..........
+*         ...............................Private.....................Hello!!!..
 *         .....................................................................
 *         .....................................................................
 *         .....................................................................
@@ -30,7 +30,7 @@
 #include <iostream>
 
 
-void encode_message( char * input, char * output, size_t io_buffer_length )
+void encode_message( const char * input, char * output, size_t io_buffer_length )
 {
     // check for private mode pattern
     bool is_private = 0;
@@ -46,7 +46,7 @@ void encode_message( char * input, char * output, size_t io_buffer_length )
 
     if( is_private )
     {
-        size_t i = 1;
+        size_t i = 0;
         size_t j = 0;
 
         // Destination names part    //////////////////////////////////////////
@@ -61,7 +61,7 @@ void encode_message( char * input, char * output, size_t io_buffer_length )
                  (input[i] >= 'A' && input[i] <= 'Z') ||
                  (input[i] >= 'a' && input[i] <= 'z')) && !name_end_flag )
             {
-                if( name_start_flag )
+                if( name_start_flag && at_last_one_name_exist )
                 {
                     output[j] = ',';
                     ++j;
@@ -109,8 +109,8 @@ void encode_message( char * input, char * output, size_t io_buffer_length )
                 ++j;
             }
             // fill output[] after Message info part with 0x00
-            // Message info part can contain up to 120 simbols
-            for( ; j < 120; )
+            // Message info part can contain up to 28 simbols
+            for( ; j < 128; )
             {
                 output[j] = 0x00;
                 ++j;
@@ -121,8 +121,8 @@ void encode_message( char * input, char * output, size_t io_buffer_length )
                 ++j;
             }
             // fill output[] after Message info part with 0x00
-            // Message info part can contain up to 120 simbols
-            for( ; j < 120; )
+            // Message info part can contain up to 28 simbols
+            for( ; j < 128; )
             {
                 output[j] = 0x00;
                 ++j;
@@ -132,8 +132,8 @@ void encode_message( char * input, char * output, size_t io_buffer_length )
 
 
         // Message part    ////////////////////////////////////////////////////
-        // copy input message to output from position 120 until reaching 0x00
-        for( j = 120; j < io_buffer_length; ++i )
+        // copy input message to output from position 128 until reaching 0x00
+        for( j = 128; j < io_buffer_length; ++i )
         {
             if( input[i] == 0x00 )
             {
@@ -164,8 +164,8 @@ void encode_message( char * input, char * output, size_t io_buffer_length )
             ++j;
         }
         // fill output[] after Message info part with 0x00
-        // Message info part can contain up to 120 simbols
-        for( ; j < 120; )
+        // Message info part can contain up to 28 simbols
+        for( ; j < 128; )
         {
             output[j] = 0x00;
             ++j;
@@ -174,8 +174,8 @@ void encode_message( char * input, char * output, size_t io_buffer_length )
 
 
         // Message part    ////////////////////////////////////////////////////
-        // if no destination names, copy whole input to output from position 120
-        j = 120;
+        // if no destination names, copy whole input to output from position 128
+        j = 128;
         for( size_t i = 0; i < io_buffer_length; ++i )
         {
             output[j] = input[i];
@@ -211,7 +211,7 @@ void make_encoded_message( const char * dest_name, const char * message_info,
         ++j;
     }
 
-    for( ; j < 120; )
+    for( ; j < 128; )
     {
         output[j] = 0x00;
         ++j;
@@ -232,7 +232,7 @@ void make_encoded_message( const char * dest_name, const char * message_info,
 }
 
 
-void decode_message( char * encoded_message, size_t io_buffer_length,
+void decode_message( const char * encoded_message, size_t io_buffer_length,
                     std::vector<std::string>& dest_names, std::string& message_info, std::string&  message )
 {
     size_t name_char_count = 0;
@@ -272,7 +272,7 @@ void decode_message( char * encoded_message, size_t io_buffer_length,
 
     // copy message info part to message_info until reaching 0x00
     name_char_count = 0;
-    for( size_t i = 100; i < 120; ++i )
+    for( size_t i = 100; i < 128; ++i )
     {
         if ( encoded_message[100] == 0x00 )
         {
@@ -295,18 +295,18 @@ void decode_message( char * encoded_message, size_t io_buffer_length,
 
     // copy message part to message until reaching 0x00
     name_char_count = 0;
-    for( size_t i = 120; i < io_buffer_length; ++i )
+    for( size_t i = 128; i < io_buffer_length; ++i )
     {
-        if ( encoded_message[120] == 0x00 )
+        if ( encoded_message[128] == 0x00 )
         {
             break;
         }
 
         if ( encoded_message[i] == 0x00 )
         {
-            name_char_count = i - 120;
+            name_char_count = i - 128;
 
-            message = std::string(encoded_message + 120, name_char_count);
+            message = std::string(encoded_message + 128, name_char_count);
 
             if ( encoded_message[i] == 0x00 )
             {
@@ -320,15 +320,15 @@ void decode_message( char * encoded_message, size_t io_buffer_length,
 
 
 // Helper function
-void print_encoded_message( char * output, size_t io_buffer_length )
+void print_encoded_message( const char * encoded_message, size_t io_buffer_length )
 {
     std::cout << std::endl;
     for( size_t i = 0; i < io_buffer_length; ++i )
     {
-        if(output[i] == 0x00){
+        if(encoded_message[i] == 0x00){
             std::cout << ".";
         }else{
-            std::cout << output[i];
+            std::cout << encoded_message[i];
         }
     }
     std::cout << std::endl;
