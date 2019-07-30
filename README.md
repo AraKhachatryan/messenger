@@ -1,5 +1,5 @@
 # messenger
-Linux/Unix terminal command line messenger with POSIX sockets and threads
+Linux/Unix terminal command line messenger(chat) with POSIX sockets and threads
 
 # Requirements
 - g++ compiler with C++11 standart
@@ -16,5 +16,5 @@ on server side:
 ./server
 
 on client side:
-./client <server ip address>
+./client server_ip_address
 
