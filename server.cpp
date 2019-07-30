@@ -124,7 +124,7 @@ void * client_thread ( void * client_socket_fd )
         }
 
         make_encoded_message(client_name, "Server:online", std::string(" is online"), sizeof(output), output);
-        print_encoded_message(output, sizeof(output));
+        //print_encoded_message(output, sizeof(output));
 
         send(client.second, output, sizeof(output), 0);
     }
@@ -225,7 +225,7 @@ void * client_thread ( void * client_socket_fd )
     // Notify to all clients that this connection is leaving
     for( const auto& client: list_clients )
     {
-        make_encoded_message(client_name, "Server:online", std::string(" is leaving"), sizeof(output), output);
+        make_encoded_message(client_name, "Server:online", std::string(" left the chat"), sizeof(output), output);
         //print_encoded_message(output, sizeof(output));
 
         send(client.second, output, sizeof(output), 0);

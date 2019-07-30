@@ -9,7 +9,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <map>
 #include <cerrno>       // for errno
 #include <cstring>      // for std::strerror()
 
@@ -221,7 +220,7 @@ void * recv_thread( void * arg )
             std::cout << terminal::TEXT_BOLD << terminal::TEXTCOLOR_WHITE << name_from.front()
                         << terminal::RESET_ALL <<  "-> " << terminal::TEXT_BOLD << terminal::TEXTCOLOR_GREEN
                         << message_from << terminal::RESET_ALL << std::endl;
-        // New active clients notifications
+        // New active clients notifications from server
         } else if ( !message_info.compare("Server:online") ) {
             std::cout << terminal::TEXT_BOLD << terminal::TEXTCOLOR_CYAN;
             for( auto it = name_from.begin(); it != name_from.end(); ++it )
