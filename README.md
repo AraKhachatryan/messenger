@@ -13,8 +13,10 @@ Compilation is done with GNU make, just type on terminal "make"
 # Usage:
 
 on server side:
+
 ./server
 
 on client side:
+
 ./client server_ip_address
 
