@@ -1,3 +1,32 @@
+/******************************************************************************
+*  @file  server.cpp
+*  @brief Multi client and multithreaded server with POSIX sockets for
+*         Linux/Unix terminal command line messenger
+*
+*  @brief main() function is responsible for creating master socket, binding
+*         with specified port, listening, accepting incoming connections
+*         from clients and creating new socket for communication with this
+*         clinet. Used POSIX sockets and threads
+*
+*  @brief client_thread() is core thread function of messenger's server,
+*         for each new client connection in main() is created new thread
+*
+*  @brief client_thread() is responsible for receiving encoded message from
+*         client, decoding the message, determining destination client names of
+*         this message, private and public state of message and sending back to
+*         recipients of this message with appropriate way
+*
+*  @brief message decoding and encoding is described in encode_decode.cpp and
+*         .hpp files
+*
+*  @brief client_thread() also is responsible for notifying to all clients that
+*         this connection is online and notifying to this connection for
+*         available online clients. Also notifies to all about leaving the chat
+*..............................................................................
+*  @version 2.0.0
+*  @author Ara Khachatryan
+******************************************************************************/
+
 #include <sys/socket.h> // Core BSD socket functions and data structures
 #include <arpa/inet.h>  // for manipulating IP addresses, for inet_addr()
 #include <unistd.h>     // for close()
@@ -15,7 +44,7 @@
 #include "encode_decode.hpp"
 
 
-std::map <std::string, int> list_clients;
+std::map <std::string, int> clients_list;
 
 void * client_thread( void * );
 
@@ -115,11 +144,11 @@ void * client_thread ( void * client_socket_fd )
     // Notify to all clients that this connection is online
     std::string active_clients;
     size_t clinets_count = 0;
-    for( const auto& client: list_clients )
+    for( const auto& client: clients_list )
     {
         active_clients += client.first;
         ++clinets_count;
-        if ( clinets_count < list_clients.size() ) {
+        if ( clinets_count < clients_list.size() ) {
             active_clients += ",";
         }
 
@@ -130,7 +159,7 @@ void * client_thread ( void * client_socket_fd )
     }
 
     // Notify to this connection for available online clients
-    if ( !list_clients.empty() )
+    if ( !clients_list.empty() )
     {
         std::string is_are;
         if( clinets_count > 1 )
@@ -146,7 +175,7 @@ void * client_thread ( void * client_socket_fd )
     }
 
 
-    list_clients.insert(std::pair<std::string, int>(std::string(client_name), fd));
+    clients_list.insert(std::pair<std::string, int>(std::string(client_name), fd));
 
 
     std::cout << "Thread ID: " << pthread_self() << " socket_fd: " << fd << " Name: " << client_name << std::endl;
@@ -184,8 +213,8 @@ void * client_thread ( void * client_socket_fd )
                 int dest_socket_desc;
 
                 // find dest_socket_desc
-                std::map <std::string, int>::iterator it = list_clients.find(d_name);
-                if (it != list_clients.end()) {
+                std::map <std::string, int>::iterator it = clients_list.find(d_name);
+                if (it != clients_list.end()) {
                     dest_socket_desc = it->second;
                 } else {
                     std::cout << "From \"" << client_name << "\": destination name \"" << d_name << "\" not found" << std::endl;
@@ -202,7 +231,7 @@ void * client_thread ( void * client_socket_fd )
             }
         // Public messages
         } else {
-            for( const auto& client: list_clients )
+            for( const auto& client: clients_list )
             {
                 // send message to all except sender
                 if ( client.first.compare(client_name) == 0 )
@@ -219,11 +248,11 @@ void * client_thread ( void * client_socket_fd )
 
     }
 
-    // removing connection information from list_clients
-    list_clients.erase(client_name);
+    // removing connection information from clients_list
+    clients_list.erase(client_name);
 
     // Notify to all clients that this connection is leaving
-    for( const auto& client: list_clients )
+    for( const auto& client: clients_list )
     {
         make_encoded_message(client_name, "Server:online", std::string(" left the chat"), sizeof(output), output);
         //print_encoded_message(output, sizeof(output));

@@ -20,7 +20,7 @@
 *  @brief decode_message() decodes from message structure and sets variables
 *  @brief make_encoded_message() makes message structure from variables
 *
-*  @version 3.1.0
+*  @version 2.0.0
 *  @author Ara Khachatryan
 ******************************************************************************/
 

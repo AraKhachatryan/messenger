@@ -1,5 +1,5 @@
 /******************************************************************************
-*  @file  encode_decode.cpp
+*  @file  encode_decode.hpp
 *  @brief functions for encodeing and decoding messages for sending over socket
 *
 *  @brief first 100 byte are destination names part
@@ -20,10 +20,9 @@
 *  @brief decode_message() decodes from message structure and sets variables
 *  @brief make_encoded_message() makes message structure from variables
 *
-*  @version 3.1.0
+*  @version 2.0.0
 *  @author Ara Khachatryan
 ******************************************************************************/
-
 
 
 void encode_message( const char * input, char * output, size_t io_buffer_length );
