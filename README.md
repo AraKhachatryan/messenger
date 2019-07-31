@@ -32,5 +32,5 @@ on client side:
 
 ### An screenshot:
 
-<img width="100%" height="100%" src="https://pbs.twimg.com/media/EAwKUj6WwAIuGm2?format=png&name=900x900">
+<img width="800" height="100%" src="https://pbs.twimg.com/media/EAwKUj6WwAIuGm2?format=png&name=900x900">
 
