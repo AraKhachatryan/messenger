@@ -29,7 +29,7 @@ on client side:
 
 ./client  server_IPv4_address
 
-** An screenshot
+### An screenshot
 
-<img width="642" height="100%" src="https://pbs.twimg.com/media/EAwKUj6WwAIuGm2?format=png&name=900x900">
+<img width="100%" height="100%" src="https://pbs.twimg.com/media/EAwKUj6WwAIuGm2?format=png&name=900x900">
 
