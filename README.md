@@ -1,5 +1,5 @@
 # messenger
-Linux/Unix terminal command line messenger(chat) with POSIX sockets and threads
+Linux/Unix terminal command line messenger (chat) with POSIX sockets and threads
 
 ## Files
 - README.md - the current readme file
