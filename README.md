@@ -21,13 +21,9 @@ Compilation is done with GNU make, just type on terminal "make"
 
 ## Usage:
 
-on server side:
+- on server side: ./server
 
-./server
-
-on client side:
-
-./client  server_IPv4_address
+- on client side: ./client  server_IPv4_address
 
 
 ### An screenshot:
